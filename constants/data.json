@@ -1,0 +1,82 @@
+{
+    "customers": [
+
+    ],
+    
+    "products": [
+
+    ],
+
+    "statistics": [
+        { "value": "1k+", "label": "Brands" },
+        { "value": "500", "label": "Shops" },
+        { "value": "250k+", "label": "Customers" }
+    ],
+
+    "shoeImages": [
+        {"index": "1", "imgUrl": "/assets/images/1.png", "width": "64", "height": "64"},
+        {"index": "2", "imgUrl": "/assets/images/2.png", "width": "64", "height": "64"},
+        {"index": "3", "imgUrl": "/assets/images/3.png", "width": "64", "height": "64"},
+        {"index": "4", "imgUrl": "/assets/images/4.png", "width": "64", "height": "64"}
+    ],
+
+    "user": [
+        {
+            "profile": "/assets/profile/user1.jpg", 
+            "review": "Amazing service and high-quality products. Would definitely recommend to anyone looking for a great experience.", 
+            "name": "Mia Pearson",
+            "role": "Entrepreneur", 
+            "ratings":  5
+        },
+
+        {
+            "profile": "/assets/profile/user2.jpg",
+            "review": "Fast delivery, but the product did not meet my expectations. Could improve on the packaging.", 
+            "name": "Mia Pearson",
+            "role": "Investor", 
+            "ratings": 2 },
+
+        {
+            "profile": "/assets/profile/user3.jpg",
+            "review": "Had a slight issue with sizing, but customer support was quick to resolve it. Very satisfied overall.",
+            "name": "Samantha White",
+            "role": "Client",
+            "ratings": 4
+        },
+
+        {
+            "profile": "/assets/profile/user4.jpg",
+            "review": "Super happy with my purchase. The quality is top-tier, and I have been recommending it to everyone.",
+            "name": "Chris Martin",
+            "role": "Graphic Designer",
+            "ratings": 3
+          },
+          {
+            "profile": "/assets/profile/user4.jpg",
+            "review": "Super happy with my purchase. The quality is top-tier, and I have been recommending it to everyone.",
+            "name": "Erica Jensen",
+            "role": "Graphic Designer",
+            "ratings": 3
+          },
+          {
+            "profile": "/assets/profile/user4.jpg",
+            "review": "Super happy with my purchase. The quality is top-tier, and I have been recommending it to everyone.",
+            "name": "Dexter Blaise",
+            "role": "Athlete",
+            "ratings": 3
+          }
+    ],
+    "productsImage": [
+      {
+        "name": "",
+        "price": "",
+        "category": "",
+        "image": "",
+        "rating": 4,
+        "discount": ""
+      }
+    ],
+    "sneakerProducts": [
+      {}
+    ]
+}

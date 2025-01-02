@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .poppins-thin {
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+  .poppins-extralight {
+    font-family: "Poppins", sans-serif;
+    font-weight: 200;
+    font-style: normal;
+  }
+  
+  .poppins-light {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  .poppins-regular {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .poppins-medium {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  .poppins-semibold {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  .poppins-bold {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  .poppins-extrabold {
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    font-style: normal;
+  }
+  
+  .poppins-black {
+    font-family: "Poppins", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+  }
+  
+  .poppins-thin-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 100;
+    font-style: italic;
+  }
+  
+  .poppins-extralight-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 200;
+    font-style: italic;
+  }
+  
+  .poppins-light-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  .poppins-regular-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: italic;
+  }
+  
+  .poppins-medium-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: italic;
+  }
+  
+  .poppins-semibold-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-style: italic;
+  }
+  
+  .poppins-bold-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  .poppins-extrabold-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 800;
+    font-style: italic;
+  }
+  
+  .poppins-black-italic {
+    font-family: "Poppins", sans-serif;
+    font-weight: 900;
+    font-style: italic;
+  }
+}
+
+body {
+  font-family: 'Poppins';
+}
+
+.button {
+  @apply bg-primary rounded-xl px-4 py-2 text-white
+}
+
+.button-text {
+  @apply font-medium
+}
+.button-text:hover {
+  @apply bg-[#0b7dd0]
+}
+
+.menu-btn {
+  @apply font-light text-sm cursor-pointer
+}
+
+.menu-btn:hover {
+  @apply font-bold border-primary border-b-2
+}
+
+.hero-text {
+  @apply text-8xl font-bold tracking-tight leading-11
+}
+
+.cta-btn {
+  @apply px-8 py-3 text-base font-medium bg-orangey rounded-full hover:scale-105
+}
+
+.plan-card {
+  @apply shadow-md px-3 py-4 rounded-2xl text-sm font-serif lg:max-h-fit max-md:max-h-48 overflow-clip md:col-span-2 lg:col-span-3 max-sm:w-[70vw] max-sm:mx-auto
+}
+
+.ball {
+  @apply bg-white md:w-[9px] md:h-[9px] rounded-full w-[4px] h-[4px]
+}
+
+.ball-text {
+  @apply bg-primary px-2 md:px-3 md:py-1 rounded-full flex w-fit justify-between gap-4 items-center
+}
+
+.link-heading {
+  @apply text-xl font-medium text-gray-100 pt-0 pb-3 max-md:mt-3
+}
+.nav-links {
+  @apply text-xs text-slate-300 cursor-pointer hover:opacity-70
+}
+
+.review-card {
+  @apply bg-white max-md:pb-1 pb-8 max-md:px-2 px-4 md:h-[30vh] lg:h-[24vh] max-md:w-[43vw] md:w-[30vw] lg:w-[22vw] rounded-2xl shadow-md box-border mt-10 max-md:h-[20vh] max-sm:h-[25vh]
+}
+
+.sidebar-text {
+  @apply text-gray-400 font-medium p-3 flex items-center justify-between cursor-pointer max-sm:text-xs
+}
+
+.sidebar-text:hover {
+  @apply hover:bg-gray-500 scale-110 z-30 shadow-md transition-all duration-0 ease-in-out text-slate-100
+}
+
+.sizes-btn {
+ @apply py-3 px-5 rounded-2xl border border-bluedark border-opacity-40
+}
+
+.button-login {
+  @apply bg-primary rounded-3xl py-3 text-center text-slate-50 cursor-pointer hover:bg-blue-600
+}
+
+.sizes-btn {
+  @apply md:py-3 md:px-5 rounded-2xl border border-bluedark border-opacity-40 max-md:px-3 max-md:py-2 cursor-pointer
+}
+
+.signup-btn {
+  @apply w-full flex items-center justify-center gap-2 py-3 px-4 bg-primary text-white rounded-md shadow-md font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-800 disabled:opacity-50
+}
