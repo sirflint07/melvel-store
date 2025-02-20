@@ -1,5 +1,8 @@
+const { sendVerificationEmail, sendWelcomeEmail, sendResetEmail } = require('../../mailtrap/sendEmail')
 const User =  require('../models/userSchema')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
+const bcrypt =  require('bcrypt')
 
 const handleErrors = (err) => {
     let errors = {name: '', username: '', state: '', address: '', email: '', password: ''}
@@ -27,7 +30,7 @@ const handleErrors = (err) => {
     return errors
 }
 
-const maxAge = 7 * 24 * 60 * 60
+const maxAge = Date.now() + (7 * 24 * 60 * 60)
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.SECRET, {
         expiresIn: maxAge
@@ -49,23 +52,65 @@ module.exports = {
     },
 
     createUser: async (req, res) => {
-        
+        // receive user input from the request object
         const body = req.body
         try {
+
             const user = await User.create(body)
+
+            // call function to create a jwt token
             const jwtToken =  createToken(user._id)
+
+            // create a cookie
             res.cookie('token', jwtToken, {
                 httpOnly: true, // Prevent access from JavaScript
-                secure: true, // Set to true if using HTTPS
-                sameSite: 'None', // Required for cross-origin cookies
+                secure: process.env.NODE_ENV === 'production', // Set to true if using HTTPS
+                sameSite: 'strict', // Required for cross-origin cookies
+                maxAge: Date.now() + (21 * 24 * 60 * 60), // Set cookie to expire in 21 days
             });
+
+            // call function to send verification email
+            await sendVerificationEmail(user.email, user.verificationToken)
             if(user) {
-                return res.status(200).json(user.id)
+                return res.status(200).json(user)
             }
             return res.status(400).json({msg: 'user could not be created'})
         } catch (err) {
             errorObject = handleErrors(err)
             return res.status(400).json(errorObject)
+        }
+    },
+
+    verifyUser: async (req, res) => {
+        const {token} = req.body
+
+        try {
+            
+            if (!token) {
+                
+                return res.status(400).json({message: 'Failed, no token received'})
+            }
+
+            const user =  await User.findOne({verificationToken: token, verificationTokenExpiresIn: {$gt: Date.now()}})
+
+            if (!user) {
+                return res.status(400).json({mesage: 'Failed, token not found or has expired'})
+            }
+
+            user.isVerified = true
+            user.verificationToken = undefined
+            user.verificationTokenExpiresIn =  undefined
+
+            await user.save()
+
+            await sendWelcomeEmail(user.username, user.email)
+
+            return res.status(200).json({message: 'Success', user: {
+                ...user._doc, password: undefined
+            }})
+
+        } catch (err) {
+            console.log(err.message)
         }
     },
 
@@ -100,13 +145,84 @@ module.exports = {
     logUser: async (req, res) => {
         const {email, password} = req.body
         try {
-            const user = await User.login(email, password)
-            if (user) {
+            const user = await User.findOne({email})
+            if(!user) {
+                throw new Error('Incorrect email, email not found')
+            }
+            const auth = await bcrypt.compare(password, user.password)
+            console.log(auth)
+            if (auth) {
+                console.log('user was logged in succesfully', user)
+                const token = createToken(user._id)
+                user.lastLogin = new Date()
+                await user.save()
+                res.cookie('token', token, {maxAge: Date.now() + (21 * 24 * 60 * 60)})
                 return res.status(200).json({user: user._id})
             }
+            throw new Error('incorrect password')
         } catch (err) {
             errorObject = handleErrors(err)
+            console.log(err.message)
             return res.status(400).json(errorObject)
+        }
+    },
+
+    logoutUser: async (req, res) => {
+        try {
+            res.cookie('token', '', {maxAge: 1})
+            return res.status(200).json({message: 'logged out successfully'})
+        } catch (error) {
+            console.log(error)
+        }
+    },
+
+    forgotPassword: async (req, res) => {
+        const {email} = req.body
+        try {
+          const user = await User.findOne({email})  
+          if (!user) {
+            return res.status(400).json({message: 'User with the email not found'})
+          }
+        const resetToken = crypto.randomBytes(20).toString('hex')
+        const resetTokenExpiresIn = Date.now() + (1 * 60 * 60)
+        user.resetPasswordToken = resetToken
+        user.resetPasswordTokenExpiresIn = resetTokenExpiresIn
+
+        await user.save()
+
+        //send reset password email
+        await sendResetEmail(user.email, `${process.env.RESET_URL}/reset-password/${resetToken}`)
+
+        return res.status(200).json({message: 'Reset email sent successfully'})
+
+        } catch (error) {
+            console.log(error.message)
+            return res.status(400).json({message: 'Error sending reset email'})
+        }
+    },
+    resetPassword: async (req, res) => {
+        const {token} = req.params;
+        const {password} = req.body
+
+        try {
+            const user = User.findOne({
+                resetPasswordToken: token,
+                resetPasswordTokenExpiresIn: {$gt: Date.now()}
+            })
+
+            if(!user) {
+                return res.status(400).json({message: 'User not found, invalid or expired token'})
+            }
+            
+            const hashedPassword = await bcrypt.hash(password, process.env.SECRET)
+            user.password = hashedPassword;
+            user.resetToken = undefined
+            user.resetPasswordTokenExpiresIn = undefined
+
+            await user.save()
+            
+        } catch (error) {
+            
         }
     }
 }

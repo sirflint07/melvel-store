@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ClientWrapper from "./ClientWrapper";
 import { UserProvider } from "@/components/contexts/UserContext";
+import { CartProvider } from "../components/contexts/AddToCart";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -15,8 +16,8 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-  title: "",
-  description: "",
+  title: process.env.PAGE_TITLE || 'Sneaker Store',
+  description: "Get affordble modern sneakers form Melvel Stores",
   icons: {
     icon: '/assets/images/nike-logo.png'
   }
@@ -30,7 +31,11 @@ export default function RootLayout({ children }) {
       >
         {/* Use ClientWrapper to handle Navbar and Footer rendering */}
         <UserProvider>
-        <ClientWrapper>{children}</ClientWrapper>
+          <CartProvider>
+            <ClientWrapper>
+              {children}
+            </ClientWrapper>
+          </CartProvider>
         </UserProvider>
       </body>
     </html>

@@ -1,6 +1,11 @@
 const mongoose = require('mongoose')
 const {isEmail} = require('validator')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const generateVerificationCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+const verificationTokenExpiryDate = () => (1 * 60 * 60 * 1000).toString();
 
 const Schema = mongoose.Schema;
 
@@ -11,7 +16,14 @@ const userSchema = new Schema({
     address: {type: String, required: [true, 'Please input your residential address']},
     email: { type: String, required: [true, 'Please input an email'], unique: true, lowercase: true, validate: [isEmail, 'Please enter a valid email'] },
     password: { type: String, required: [true, 'Password field cannot be empty'], minLength: [6, 'Password should be a minimum of 6 characters'] },
+    lastLogin: {type: Date, default: Date.now()},
     googleID: {type: String},
+    isVerified: {type: Boolean, default: false},
+    verificationToken: String,
+    resetPasswordToken: String,
+    verificationTokenExpiresIn: String,
+    resetPasswordTokenExpiresIn: String
+
 }, {timestamps: true})
 
 userSchema.virtual('formattedCreatedAt').get(function () {
@@ -26,22 +38,24 @@ userSchema.virtual('formattedCreatedAt').get(function () {
 userSchema.pre('save', async function (next)  {
     const salt = await bcrypt.genSalt()
     this.password = await bcrypt.hash(this.password, salt)
+    this.verificationToken = generateVerificationCode()
+    this.verificationTokenExpiresIn = verificationTokenExpiryDate()
     next()
 })
 
 
-//staic method for sign in
-userSchema.statics.login = async function (email, password) {
-    const user = await this.findOne({email})
-    if (user) {
-        const auth = await bcrypt.compare(password, user.password)
-        if (auth) {
-            return user
-        }
-        throw Error('incorrect password')
-    }
-    throw new Error('Incorrect email, email not found')
-}
+//static method for sign in
+// userSchema.statics.login = async function (email, password) {
+//     const user = await this.findOne({email})
+//     if (user) {
+//         const auth = await bcrypt.compare(password, user.password)
+//         if (auth) {
+//             return user
+//         }
+//         throw Error('incorrect password')
+//     }
+//     throw new Error('Incorrect email, email not found')
+// }
 
 
 userSchema.post('save', function (doc, next)  {

@@ -26,8 +26,6 @@ app.prepare()
     server.use(bodyParser.urlencoded({ extended: true }));
     server.use(ProductRouter);
     server.use(UserRouter);
-    
-
 
     // Database connection
     const connectDB = async () => {
@@ -35,7 +33,7 @@ app.prepare()
         await mongoose.connect(process.env.MONGO_URI);
         console.log("> Successfully connected to Database");
       } catch (err) {
-        console.error("> Failed to connect to Database:", err);
+        console.error("> Failed to connect to Database:", err.message);
       }
     };
 

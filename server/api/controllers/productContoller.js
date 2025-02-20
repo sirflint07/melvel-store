@@ -52,7 +52,6 @@ module.exports = {
         res.status(400).json(error.message)
        }
     },
-
     // delete a Sneaker
 
     deleteSneaker: async () => {

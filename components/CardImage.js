@@ -3,7 +3,6 @@
 import { motion, useAnimationControls, useInView } from 'framer-motion'
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
-import { useAnimate } from 'framer-motion'
 import data from '../constants/data.json'
 
 const CardImage = () => {

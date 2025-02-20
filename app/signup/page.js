@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useContext } from 'react';
-import { UserContext } from '../../components/contexts/UserContext'; // Import the user context
 import { FaUserPlus } from 'react-icons/fa';
 import { IoWarning } from "react-icons/io5";
 import {motion} from 'framer-motion'
@@ -24,7 +23,6 @@ const SignUpForm = () => {
     password: '',
   });
 
-  const {signedUser, setSignedUser} = useContext(UserContext)
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -32,40 +30,54 @@ const SignUpForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true); // Set loading state to true initially
-
+    setIsLoading(true);
+  
+    // Basic client-side validation
+    if (!formData.name || !formData.email || !formData.password || Object.values(formData).includes('')) {
+      console.log('Form Data:', formData);
+      console.log('Form Error', formError); // Debugging log
+      setIsLoading(false);
+    }
+  
     try {
-      // Make API call to create the user
-      const response = await fetch('/api/signup', {
+      console.log('Form Data:', formData); // Debugging log
+      const response = await fetch('http://localhost:4000/api/signup', {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: {
           'Content-Type': 'application/json',
-        }
+        },
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        // Successful signup: Clear form data and form errors
-        setFormData(formData);
-        setSignedUser(formData.username)
-        setFormError({}); // Clear any previous errors
-        //location.assign('/')
+        setFormData({
+          name: '',
+          username: '',
+          state: '',
+          address: '',
+          email: '',
+          password: '',
+        });
+        setFormError({});
         console.log('User signed up successfully:', data);
-        console.log('User has a username of ',signedUser);
       } else {
-        // Handle validation errors returned from the server
+        console.log('Server Error:', data); // Log server error details
         setFormError((prevErrors) => ({
           ...prevErrors,
-          ...data, // Set Errors
+          ...data,
         }));
+
+        setTimeout(() => {setFormError({})}, 6000)
+        console.log('Form Errors:', formError); // Log form errors
       }
     } catch (error) {
       console.error('Error during signup:', error);
-      // Handle client-side errors (e.g., network issues)
       setFormError((prevErrors) => ({
         ...prevErrors,
         general: 'Something went wrong. Please try again later.',
@@ -74,6 +86,7 @@ const SignUpForm = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 to-slate-100 flex items-center justify-center px-4">

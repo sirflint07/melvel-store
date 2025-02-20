@@ -9,8 +9,10 @@ import { FaCartShopping } from "react-icons/fa6";
 import { useAnimationControls, motion, MotionConfig } from 'framer-motion';
 import { BsStarFill } from 'react-icons/bs';
 import { FaHeart } from "react-icons/fa6";
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { homeProducts, shoeSizes, shoeColors } from '../../../constants/index';
+import { Store } from '@/components/contexts/AddToCart';
+
 
 const ProductPage = ({params}) => {
 
@@ -47,16 +49,19 @@ const [sizeChoice, setSIzeChoice] = useState(null)
 // function to store and handle size choice
 const handleSizeChange = (size, i) => {
   setSIzeChoice(size)
-  // console.log(size)
-  // console.log(i)
 }
 
 // handling of color choice
 const [colorChoice, setColorChoice] = useState("Black");
 const handleShoeChoice = (color) => {
     setColorChoice(color)
-    // console.log(color)
 }
+
+const { state, dispatch } = useContext(Store)
+  const addToCartHandler = () => {
+    dispatch({type: 'ADD_ITEM', payload: {...product, quantity: 1}})
+  }
+
   return (
     <section>
       <div className='mt-20 sm:w-[95vw] md:w-10/12 lg:w-11/12 mx-auto flex items-center flex-col'>
@@ -83,9 +88,9 @@ const handleShoeChoice = (color) => {
         animate={controls} 
         className='flex flex-col items-center'>
           <div>
-          <Image src={product.banner} alt='image' width={250} height={250} className='object-contain z-10'/>
+          <Image src={product.image} alt='image' width={250} height={250} className='object-contain z-10'/>
           </div>
-          <div className='h-2 w-20 blur-md bg-black rounded-full -mt-2 z-0'></div>
+          <div className='h-2 w-20 blur-md bg-black rounded-full -mt-2 z-0 opacity-10'></div>
           </motion.div>
           </MotionConfig>
         </div>
@@ -117,7 +122,10 @@ const handleShoeChoice = (color) => {
               onClick={handleLoveChange}/>
             </div>
             <div className='border border-gray-300 border-opacity-80 flex justify-evenly rounded-xl mt-4 items-center'>
-                <div className='md:py-3 md:px-5 font-medium text-lg max-md:py-2 max-md:px-3'>
+                <div
+                 onClick={addToCartHandler}
+                className='md:py-3 md:px-5 font-medium text-lg max-md:py-2 max-md:px-3'
+                >
                 +
                 </div>
                 <div className='md:py-3 md:px-5 text-base max-md:py-2 max-md:px-3'>

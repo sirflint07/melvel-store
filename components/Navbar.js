@@ -18,7 +18,6 @@ function Navbar() {
 
 const {scrollYProgress} = useScroll() 
 const [isOpen, setIsOpen] = useState(false)
-const {signedUser, setSignedUser} = useContext(UserContext)
 
   return (
     <>
@@ -53,7 +52,6 @@ const {signedUser, setSignedUser} = useContext(UserContext)
             <li className='menu-btn'>Men</li>
             <li className='menu-btn'>Women</li>
             <li className='menu-btn'>Children</li>
-            <li>{signedUser ? signedUser.username : 'Guest'}</li> {/* Display username or 'Guest' */}
           </ul>
         </div>
         <ul className='flex items-center gap-4 w-6/12 justify-end'>

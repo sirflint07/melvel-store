@@ -13,7 +13,7 @@ const Login = () => {
   const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
-  }); // Store login details
+}); // Store login details
 
   // Handle input changes
   const handleChange = (e) => {
@@ -37,7 +37,7 @@ const Login = () => {
 
     try {
       // Send login request to the backend
-      const response = await fetch("http://localhost:4000/login", {
+      const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,9 +57,10 @@ const Login = () => {
 
       console.log("Login successful:", data); // Log user data for testing
       alert("Login successful!"); // Display success message
-      // Redirect to dashboard or other page here (if required)
+      window.location.href = 'http://localhost:4000/'  // Redirect to dashboard or other page here (if required)
+
     } catch (err) {
-      console.error("Error during login:", err);
+      console.log(err.message)
       setError("Something went wrong. Please try again later.");
       setTimeout(() => setError(""), 6000);
     }
@@ -130,6 +131,8 @@ const Login = () => {
                 value="Sign in"
                 className="w-full bg-primary py-3 rounded-3xl text-slate-100 mt-8 text-lg font-medium shadow-sm"
               />
+
+              
             </form>
             <p className="mt-4 ml-2">
               Don't have an account?{" "}

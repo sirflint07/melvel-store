@@ -15,6 +15,8 @@ const sneakerSchema = new Schema({
     discountPrice: {type: Number},
     discount: {type: Number},
     banner: {type: String, required: true},
+    isFeatured: {type: Boolean, default: false},
+    color: {type: String},
 }, {timestamps: true})
 
 const sneakerModel = mongoose.models.Sneaker || mongoose.model('Sneaker', sneakerSchema)
