@@ -9,13 +9,12 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const Login = () => {
-  const [error, setError] = useState(""); // Store error messages
+  const [error, setError] = useState("");
   const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
-}); // Store login details
+});
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setLoginInfo((prev) => ({
@@ -24,40 +23,37 @@ const Login = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent form reload
 
-    // Validate inputs
     if (!loginInfo.email || !loginInfo.password) {
       setError("Email and password are required.");
-      setTimeout(() => setError(""), 6000); // Hide error after 6 seconds
+      setTimeout(() => setError(""), 6000);
       return;
     }
 
     try {
-      // Send login request to the backend
       const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(loginInfo),
-        credentials: "include", // Include cookies if required
+        credentials: "include",
       });
 
       const data = await response.json();
+      console.log("Response data:", data.username);
 
-      // Handle errors from the backend
       if (!response.ok) {
-        setError(data.message || "Failed to login. Please try again.");
+        setError(data.message ?? "Failed to login. Please try again.");
         setTimeout(() => setError(""), 6000);
         return;
       }
 
-      console.log("Login successful:", data); // Log user data for testing
-      alert("Login successful!"); // Display success message
-      window.location.href = 'http://localhost:4000/'  // Redirect to dashboard or other page here (if required)
+      console.log("Login successful:", data);
+      alert("Login successful!");
+      window.location.href = 'http://localhost:4000/';
 
     } catch (err) {
       console.log(err.message)
@@ -123,19 +119,19 @@ const Login = () => {
                 name="password"
                 onChange={handleChange}
               />
-              <p className="font-semibold text-[15px] mt-4 text-end">
+              <a href="/forgot-password" target="_top" className="font-semibold text-[15px] mt-4 text-end hover:text-primary block">
                 Forgot Password?
-              </p>
+              </a>
               <input
                 type="submit"
                 value="Sign in"
-                className="w-full bg-primary py-3 rounded-3xl text-slate-100 mt-8 text-lg font-medium shadow-sm"
+                className="w-full bg-primary py-3 rounded-3xl text-slate-100 mt-8 text-lg font-medium shadow-sm cursor-pointer"
               />
 
               
             </form>
             <p className="mt-4 ml-2">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <span className="text-base text-primary font-bold cursor-pointer inline-block pl-2">
                 <a href="/signup">Sign Up</a>
               </span>

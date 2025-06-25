@@ -1,4 +1,4 @@
-const { sendVerificationEmail, sendWelcomeEmail, sendResetEmail } = require('../../mailtrap/sendEmail')
+const { sendVerificationEmail, sendWelcomeEmail, sendResetEmail, sendResetEmailSuccess } = require('../../mailtrap/sendEmail')
 const User =  require('../models/userSchema')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
@@ -33,11 +33,24 @@ const handleErrors = (err) => {
 const maxAge = Date.now() + (7 * 24 * 60 * 60)
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.SECRET, {
-        expiresIn: maxAge
+        expiresIn: '14d'
     })
 }
 
 module.exports = {
+    getUser: async (req, res) => {
+        const id = req.params.id
+        try {
+        const user = await User.findById(id).select('-password');
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+  }
+    },
+
     getUsers: async (req, res) => {
         try {
             const users = await User.find({}, {email: 1, username: 1, password: 1})
@@ -51,83 +64,104 @@ module.exports = {
         }
     },
 
-    createUser: async (req, res) => {
-        // receive user input from the request object
-        const body = req.body
-        try {
+createUser: async (req, res) => {
+    const body = req.body;
+    try {
+    const user = await User.create(body);
+    const jwtToken = createToken(user._id);
 
-            const user = await User.create(body)
+    res.cookie('token', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 21 * 24 * 60 * 60 * 1000,
+    });
 
-            // call function to create a jwt token
-            const jwtToken =  createToken(user._id)
+    try {
+      await sendVerificationEmail(user.email, user.verificationToken, user.username);
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      try {
+        await User.deleteOne({ _id: user._id });
+      } catch (deleteError) {
+        console.error('Failed to rollback user:', deleteError);
+      }
+      return res.status(500).json({ error: 'Failed to send verification email' });
+    }
 
-            // create a cookie
-            res.cookie('token', jwtToken, {
-                httpOnly: true, // Prevent access from JavaScript
-                secure: process.env.NODE_ENV === 'production', // Set to true if using HTTPS
-                sameSite: 'strict', // Required for cross-origin cookies
-                maxAge: Date.now() + (21 * 24 * 60 * 60), // Set cookie to expire in 21 days
-            });
+    return res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      userId: user._id
+    });
 
-            // call function to send verification email
-            await sendVerificationEmail(user.email, user.verificationToken)
-            if(user) {
-                return res.status(200).json(user)
-            }
-            return res.status(400).json({msg: 'user could not be created'})
-        } catch (err) {
-            errorObject = handleErrors(err)
-            return res.status(400).json(errorObject)
-        }
-    },
+  } catch (err) {
+    const errorObject = handleErrors(err);
+    return res.status(400).json(errorObject);
+  }
+},
 
-    verifyUser: async (req, res) => {
-        const {token} = req.body
+checkAuthentication: async (req, res) => {
+  const token = req.cookies.token;
+  if (token) {
+    try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    res.status(200).json({ authenticated: true, user: decoded });
+  } catch (err) {
+    res.status(401).json({ authenticated: false, message: 'Invalid token' });
+  }
+  } else {
+    return res.status(401).json({ authenticated: false });
+  }
+},
 
-        try {
+verifyUser: async (req, res) => {
+    const {token} = req.body
+
+    try {
+        
+        if (!token) {
             
-            if (!token) {
-                
-                return res.status(400).json({message: 'Failed, no token received'})
-            }
+            return res.status(400).json({message: 'Failed, no token received'})
+        }
 
-            const user =  await User.findOne({verificationToken: token, verificationTokenExpiresIn: {$gt: Date.now()}})
+        const user =  await User.findOne({verificationToken: token, verificationTokenExpiresIn: {$gt: Date.now()}})
 
-            if (!user) {
-                return res.status(400).json({mesage: 'Failed, token not found or has expired'})
-            }
+        if (!user) {
+            return res.status(400).json({mesage: 'Failed, token not found or has expired'})
+        }
 
-            user.isVerified = true
-            user.verificationToken = undefined
-            user.verificationTokenExpiresIn =  undefined
+        user.isVerified = true
+        user.verificationToken = undefined
+        user.verificationTokenExpiresIn =  undefined
 
-            await user.save()
+        await user.save()
 
-            await sendWelcomeEmail(user.username, user.email)
+        await sendWelcomeEmail(user.username, user.email)
 
-            return res.status(200).json({message: 'Success', user: {
-                ...user._doc, password: undefined
-            }})
+        return res.status(200).json({message: 'Success!! Email verification successful', user: {
+            ...user._doc, password: undefined
+        }})
 
-        } catch (err) {
-            console.log(err.message)
+    } catch (err) {
+        return res.status(400).json({message: 'Error verifying'})
         }
     },
 
-    deleteUser: async (req, res) => {
-        const id = req.params.id
-        try {
-            const user = await User.findByIdAndDelete(id)
-            if(!user) {
-               return res.status(400).json({msg: 'user not found'})
-            }
-            return res.status(200).json(user)
-        } catch (error) {
-            res.status(404).json(error.message)
+deleteUser: async (req, res) => {
+    const id = req.params.id
+    try {
+        const user = await User.findByIdAndDelete(id)
+        if(!user) {
+            return res.status(400).json({msg: 'user not found'})
+        }
+        return res.status(200).json(user)
+    } catch (error) {
+        res.status(404).json(error.message)
         }
     },
 
-    updateUser: async (req, res) => {
+updateUser: async (req, res) => {
         const body = req.body
         const id = req.params.id
         try {
@@ -142,12 +176,13 @@ module.exports = {
         }
     },
 
-    logUser: async (req, res) => {
+logUser: async (req, res) => {
         const {email, password} = req.body
         try {
             const user = await User.findOne({email})
             if(!user) {
-                throw new Error('Incorrect email, email not found')
+                // throw new Error('Incorrect email, email not found')
+                return res.status(400).json({message: 'Incorrect email, email not found'})
             }
             const auth = await bcrypt.compare(password, user.password)
             console.log(auth)
@@ -167,14 +202,23 @@ module.exports = {
         }
     },
 
-    logoutUser: async (req, res) => {
-        try {
-            res.cookie('token', '', {maxAge: 1})
-            return res.status(200).json({message: 'logged out successfully'})
-        } catch (error) {
-            console.log(error)
-        }
-    },
+   
+
+logoutUser: async (req, res) => {
+    try {
+      res.clearCookie('token');
+      res.setHeader('Clear-Site-Data', '"cookies", "storage"');
+      res.setHeader('Cache-Control', 'no-store');
+      
+      return res.status(200).json({ 
+        message: 'Logged out successfully',
+        redirect: '/login'
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      return res.status(500).json({ message: 'Logout failed' });
+    }
+  },
 
     forgotPassword: async (req, res) => {
         const {email} = req.body
@@ -184,7 +228,7 @@ module.exports = {
             return res.status(400).json({message: 'User with the email not found'})
           }
         const resetToken = crypto.randomBytes(20).toString('hex')
-        const resetTokenExpiresIn = Date.now() + (1 * 60 * 60)
+        const resetTokenExpiresIn = Date.now() + (2 * 60 * 60 * 1000)
         user.resetPasswordToken = resetToken
         user.resetPasswordTokenExpiresIn = resetTokenExpiresIn
 
@@ -200,29 +244,47 @@ module.exports = {
             return res.status(400).json({message: 'Error sending reset email'})
         }
     },
+
     resetPassword: async (req, res) => {
         const {token} = req.params;
         const {password} = req.body
 
         try {
-            const user = User.findOne({
+            const user = await User.findOne({
                 resetPasswordToken: token,
                 resetPasswordTokenExpiresIn: {$gt: Date.now()}
             })
 
             if(!user) {
-                return res.status(400).json({message: 'User not found, invalid or expired token'})
+                return res.status(400).json({message: 'Invalid token or token has expired'})
             }
             
-            const hashedPassword = await bcrypt.hash(password, process.env.SECRET)
+            const salt = await bcrypt.genSalt()
+            const hashedPassword = await bcrypt.hash(password, salt)
             user.password = hashedPassword;
             user.resetToken = undefined
             user.resetPasswordTokenExpiresIn = undefined
 
             await user.save()
+            await sendResetEmailSuccess(user.email)
+            return res.status(200).json({message: 'Password reset successful'})
             
         } catch (error) {
-            
+            console.log(error.message)
+            return res.status(400).json({message: 'Error resetting password'})
+        }
+    },
+
+    checkAuth: async (req, res) => {
+        try {
+            const user = User.findById(req.userId)
+            if (!user) {
+                return res.status(400).json({message: 'User not found'})
+            }
+            return res.status(200).json({message: 'User authenticated successfully'})
+        } catch (error) {
+            console.log(error.message)
+            return res.status(400).json({message: 'Error authenticating user'})
         }
     }
 }

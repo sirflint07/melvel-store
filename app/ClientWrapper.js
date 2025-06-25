@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 export default function ClientWrapper({ children }) {
   const pathname = usePathname();
   const path = pathname === "/login" | pathname === '/signup';
-  //const isSignUp = pathname === "/signup"
+
   return (
     <>
       {!path && <Navbar />}

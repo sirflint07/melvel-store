@@ -11,7 +11,11 @@ export const homeProducts = [
         slug: "max-1",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Fila Destructor",
@@ -25,7 +29,11 @@ export const homeProducts = [
         slug: "max-2",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Nike Air Force 1",
@@ -39,7 +47,11 @@ export const homeProducts = [
         slug: "max-3",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Converse Chuck Taylor",
@@ -53,7 +65,11 @@ export const homeProducts = [
         slug: "max-4",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Nike React Infinity Run",
@@ -67,7 +83,11 @@ export const homeProducts = [
         slug: "max-5",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Air Force Max",
@@ -81,7 +101,11 @@ export const homeProducts = [
         slug: "max-6",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Nike Leather",
@@ -95,7 +119,11 @@ export const homeProducts = [
         slug: "max-7",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Nike Leather",
@@ -109,7 +137,11 @@ export const homeProducts = [
         slug: "max-8",
         isFeatured: true,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Nike Leather Air",
@@ -123,7 +155,11 @@ export const homeProducts = [
         slug: "max-9",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Puma Fill On",
@@ -137,7 +173,11 @@ export const homeProducts = [
         slug: "max-10",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Converse Chuck Taylor",
@@ -151,7 +191,11 @@ export const homeProducts = [
         slug: "max-11",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Converse Chuck Taylor",
@@ -165,7 +209,11 @@ export const homeProducts = [
         slug: "max-12",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Converse Chuck Taylor",
@@ -179,7 +227,11 @@ export const homeProducts = [
         slug: "max-13",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Converse Chuck Taylor",
@@ -193,7 +245,11 @@ export const homeProducts = [
         slug: "max-14",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     },
     {
         name: "Converse Chuck Taylor",
@@ -207,7 +263,11 @@ export const homeProducts = [
         slug: "max-15",
         isFeatured: false,
         mobileheight: 300,
-        mobilewidth: 300
+        mobilewidth: 300,
+        countInStock: 20,
+        quantity: 0,
+        color: ["Red", "Blue", "Black"],
+        sizes: [38, 39, 40, 41, 42, 43, 44, 45]
     }
 ]
 
@@ -232,3 +292,24 @@ export const shoeColors = [
     { color: "Red", hex: 'bg-red-600', id: 5 },
     { color: "Silver", hex: 'bg-slate-300', id: 6 }
 ]
+
+export const handleLogout = async ({dispatch, router}) => {
+    try {
+      const response = await fetch('http://localhost:4000/api/logout', {
+        method: 'POST',
+        credentials: 'include' // Required for cookie clearing
+      });
+
+      if (response.ok) {
+        // Clear client-side state
+        dispatch({ type: 'CLEAR_CART' });
+        localStorage.removeItem('userState');
+        
+        // Redirect
+        router.push('/login');
+        router.refresh(); // Force Next.js cache invalidation
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+};

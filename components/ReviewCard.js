@@ -13,10 +13,10 @@ const ReviewCard = () => {
     return (
       <div className="w-11/12 grid lg:grid-cols-4 md:grid-cols-3 max-md:grid-cols-2 mb-8 mx-auto gap-6 sm:grid-cols-2">
           {user.map((rates, i) => (
-            <div key={i} className='review-card'> {/* Unique key */}
+            <div key={i} className='review-card'>
               <div className="bg-blue-300 bg-opacity-10 float-left -mt-6 h-16 w-16 rounded-full p-2"></div>
               <div className="rounded-full bg-white w-[52px] h-[52px] border border-gray-700 overflow-clip relative -top-[18px] left-[6.2px] z-5">
-                {/* Try using img tag for troubleshooting purposes */}
+                
                 <Image 
                   src={rates.profile} 
                   alt="customer-image" 
@@ -31,7 +31,7 @@ const ReviewCard = () => {
                 {rates.review}
               </div>
               <div className="border border-b border-gray-200 mb-4 border-opacity-60"></div>
-              <div className="flex max-sm:flex-row sm:flex-row justify-between md:flex-row">
+              <div className="flex max-sm:flex-row sm:flex-row justify-between md:flex-row pb-0 lg:pb-3">
                 <div className="">
                   <div className="font-bold text-gray-600 text-sm w-fit max-sm:text-xs">{rates.name}</div>
                   <div className="text-xs font-normal text-gray-400 w-fit max-md:text-xxs">{rates.role}</div>

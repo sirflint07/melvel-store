@@ -21,8 +21,12 @@ app.prepare()
     const server = express();
 
     // Middleware
-    server.use(cors());
+    server.use(cors({
+      origin: dev ? "http://localhost:4000" : "https://melvel.com",
+      credentials: true,
+    }));
     server.use(bodyParser.json());
+    server.use(cookieParser());
     server.use(bodyParser.urlencoded({ extended: true }));
     server.use(ProductRouter);
     server.use(UserRouter);

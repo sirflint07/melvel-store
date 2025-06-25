@@ -11,9 +11,9 @@ const FeaturedProducts = () => {
     const ref = useRef()
     const inView = useInView(ref, {})
 
-    useEffect(() => {
-        console.log(inView)
-    }, [inView])
+    // useEffect(() => {
+    //     console.log(inView)
+    // }, [inView])
 
   return (
     <section className='mt-8 mx-auto'>
@@ -37,7 +37,7 @@ const FeaturedProducts = () => {
                 }}
               >
                 {/* Product Image */}
-                <div className="w-full max-md:h-fit max-md:pb-3 md:h-56 md:pb-0 mx-auto">
+                <div className="w-full max-md:h-fit max-md:pb-3 md:h-56 md:pb-0 mx-auto flex items-center justify-center">
                   <Image
                     src={product.image}
                     alt={product.name}

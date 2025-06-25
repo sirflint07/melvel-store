@@ -14,10 +14,10 @@
     ],
 
     "shoeImages": [
-        {"index": "1", "imgUrl": "/assets/images/1.png", "width": "64", "height": "64"},
-        {"index": "2", "imgUrl": "/assets/images/2.png", "width": "64", "height": "64"},
-        {"index": "3", "imgUrl": "/assets/images/3.png", "width": "64", "height": "64"},
-        {"index": "4", "imgUrl": "/assets/images/4.png", "width": "64", "height": "64"}
+        {"index": "1", "imgUrl": "https://res.cloudinary.com/djpdesqrs/image/upload/v1737556405/sneaker17_yeu6il.png", "width": "64", "height": "64"},
+        {"index": "2", "imgUrl": "https://res.cloudinary.com/djpdesqrs/image/upload/v1737556481/2_nh1yry.png", "width": "64", "height": "64"},
+        {"index": "3", "imgUrl": "https://res.cloudinary.com/djpdesqrs/image/upload/v1737556471/3_fzlpzw.png", "width": "64", "height": "64"},
+        {"index": "4", "imgUrl": "https://res.cloudinary.com/djpdesqrs/image/upload/v1737556467/4_pi0mex.png", "width": "64", "height": "64"}
     ],
 
     "user": [

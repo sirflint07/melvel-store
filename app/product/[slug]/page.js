@@ -1,184 +1,222 @@
-"use client"
+'use client';
 
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { FaChevronCircleRight } from "react-icons/fa";
-import { FaChevronCircleLeft } from "react-icons/fa";
-import { FaChevronLeft } from "react-icons/fa6";
-import { FaCartShopping } from "react-icons/fa6";
+import { FaChevronCircleRight, FaChevronCircleLeft } from 'react-icons/fa';
+import { FaChevronLeft, FaCartShopping } from 'react-icons/fa6';
 import { useAnimationControls, motion, MotionConfig } from 'framer-motion';
 import { BsStarFill } from 'react-icons/bs';
-import { FaHeart } from "react-icons/fa6";
+import { FaHeart } from 'react-icons/fa6';
 import { useContext, useState } from 'react';
-import { homeProducts, shoeSizes, shoeColors } from '../../../constants/index';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+
+import { homeProducts, shoeSizes, shoeColors } from '@/constants';
 import { Store } from '@/components/contexts/AddToCart';
+import { CiCircleRemove } from 'react-icons/ci';
 
+const slideVariants = {
+  slide: { x: [0, 350, 0] },
+  slideX: { x: [0, -350, 0] },
+};
 
-const ProductPage = ({params}) => {
+function ProductPage({ params }) {
+  const controls = useAnimationControls();
+  const { slug } = params;
+  const product = homeProducts.find(item => item.slug === slug);
+  if (!product) notFound();
 
-  const controls = useAnimationControls()
-  const {slug} = params
-  const product = homeProducts.find((item) => item.slug === slug)
-  const [loveColor, setloveColor] = useState(false)
-  const handleLoveChange = () => {
-    setloveColor(!loveColor)
-  }
-  const  slideVariants = {
-    slide: {
-      x: [0, 350, 0]
-    },
-    slideX: {
-      x: [0, -350,0]
-    }
-  }
+  const [loveColor, setLoveColor] = useState(false);
+  const [sizeChoice, setSizeChoice] = useState(null);
+  const [colorChoice, setColorChoice] = useState('Black');
 
-  const handleSlide = () => {
-    controls.start('slide')
-  }
-  const handleSlideLeft = () => {
-    controls.start('slideX')
-  }
+  const { state, dispatch } = useContext(Store);
+  const existItem = state.cartItems.find(item => item.slug === product.slug);
+  const currentQty = existItem ? existItem.quantity : 0;
 
-    
-if (!product) {
-  notFound();
-}
-
-const [sizeChoice, setSIzeChoice] = useState(null)
-
-// function to store and handle size choice
-const handleSizeChange = (size, i) => {
-  setSIzeChoice(size)
-}
-
-// handling of color choice
-const [colorChoice, setColorChoice] = useState("Black");
-const handleShoeChoice = (color) => {
-    setColorChoice(color)
-}
-
-const { state, dispatch } = useContext(Store)
   const addToCartHandler = () => {
-    dispatch({type: 'ADD_ITEM', payload: {...product, quantity: 1}})
-  }
+    const nextQty = currentQty + 1;
+    if (product.countInStock < nextQty) {
+      return window.alert('Sorry, product is out of stock');
+    }
+    dispatch({ type: 'ADD_ITEM', payload: product });
+  };
+
+  const removeFromCartHandler = () => {
+    if (currentQty > 0) {
+      dispatch({ type: 'REMOVE_ITEM', payload: product });
+    }
+  };
+
+  const handleClear = () => dispatch({ type: 'CLEAR_ITEM', payload: product });
+  const handleLoveChange = () => setLoveColor(prev => !prev);
+  const handleSizeChange = size => setSizeChoice(size);
+  const handleColorChange = color => setColorChoice(color);
+  const handleSlide = () => controls.start('slide');
+  const handleSlideLeft = () => controls.start('slideX');
+
+  // Animation config
+  const transition = { duration: 5, ease: 'backInOut' };
 
   return (
-    <section>
-      <div className='mt-20 sm:w-[95vw] md:w-10/12 lg:w-11/12 mx-auto flex items-center flex-col'>
-      <div>
-      <br /><br/>
-      </div>
-      <div className='flex justify-between md:w-9/12 mx-auto mb-8 max-md:w-[80vw]'>
-        <div className='flex items-center'><a className='flex items-center' href='/'><FaChevronLeft className='text-gray-400' size={20}/><span className='pl-2 text-base font-semibold text-gray-400'>Back</span></a></div>
-        <div className='bg-slate-100 relative rounded-full h-10 w-10 content-center place-content-center'>
-        <span className='bg-red-600 w-4 h-4 rounded-full absolute -top-2 -right-1 flex justify-center items-center text-xs text-white'>1</span>
-        <FaCartShopping className='mx-auto' size={20}/>
+    <section className="pt-20">
+      <div className="container mx-auto px-4 flex flex-col items-center mt-10">
+        {/* Back + Cart Icon */}
+        <div className="flex justify-between w-full lg:w-10/12 mb-8">
+          <Link href="/" className="flex items-center text-gray-400">
+            <FaChevronLeft size={20} /> <span className="ml-2">Back</span>
+          </Link>
+          <Link href="/cart" className="relative text-gray-700">
+            {state.cartItems.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                {state.cartItems.reduce((a, c) => a + c.quantity, 0)}
+              </span>
+            )}
+            <FaCartShopping size={24} />
+          </Link>
         </div>
-      </div>
-      <div className='flex justify-between items-center w-10/12 max-lg:gap-6 lg:gap-2'>
-      <FaChevronCircleLeft onClick={handleSlideLeft} size={21} className='max-md:hidden md:visible'/>
-        <div className='max-md:mx-auto bg-blue-50 max-md:w-[80vw] md:w-[70vw] max-sm:h-[30vh] h-[40vh] rounded-2xl place-content-center place-items-center'>
-        <MotionConfig
-        transition= {{
-        duration: 5, ease: 'backInOut'
-      }}
-        >
-        <motion.div
-        variants={slideVariants}
-        animate={controls} 
-        className='flex flex-col items-center'>
-          <div>
-          <Image src={product.image} alt='image' width={250} height={250} className='object-contain z-10'/>
-          </div>
-          <div className='h-2 w-20 blur-md bg-black rounded-full -mt-2 z-0 opacity-10'></div>
-          </motion.div>
-          </MotionConfig>
-        </div>
-        <FaChevronCircleRight onClick={handleSlide} size={21} className='max-md:hidden md:visible'/>
-      </div>
-    </div>
 
-    <div 
-    className='max-md:w-[75vw] md:w-[60vw] lg:w-[65vw] border border-bluedark mb-5 mt-10 border-opacity-10 mx-auto'></div>
-    <section className='max-md:w-[80vw] md:w-[60vw] lg:w-[65vw] mx-auto py-3'>
-    <div 
-    className='flex justify-between mx-auto'>
-      <div>
-        <p className='md:text-2xl font-bold text-blue-950 max-md:text-base'>{product.name}</p>
-          <div className='flex mt-2 items-center max-sm:pt-2'>
-          {Array.from({ length: Math.floor(product.rating) }).map((_, index) => (
-            <BsStarFill key={index} color="#ffb500" />
-          ))}
-          <p className="font-semibold opacity-70 ml-2">(<span className='italic px-[2px]'>{product.rating}</span>)</p>
+        {/* Image Slider */}
+        <div className="flex items-center w-full lg:w-10/12 mb-6">
+          <FaChevronCircleLeft
+            onClick={handleSlideLeft}
+            size={24}
+            className="hidden md:block cursor-pointer"
+          />
+          <div className="mx-4 flex-1 bg-blue-50 rounded-2xl h-60 md:h-80 overflow-hidden">
+            <MotionConfig transition={transition}>
+              <motion.div
+                variants={slideVariants}
+                animate={controls}
+                className="flex justify-center items-center h-full"
+              >
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  width={250}
+                  height={250}
+                  className="object-contain"
+                />
+              </motion.div>
+            </MotionConfig>
           </div>
-          <p className='text-lg font-normal tracking-wider mt-1'>${product.price}</p>
+          <FaChevronCircleRight
+            onClick={handleSlide}
+            size={24}
+            className="hidden md:block cursor-pointer"
+          />
         </div>
-        <div className='flex flex-col items-end'>
-            <div
-            className='w-10 h-10 rounded-full border border-gray-300 border-opacity-75 flex items-center justify-center group '>
-              <FaHeart size={20} 
-              className='cursor-pointer' 
-              color={loveColor ? '#cecece' : '#FF0000'}
-              onClick={handleLoveChange}/>
+
+        {/* Divider */}
+        <hr className="w-full lg:w-10/12 border-gray-300 opacity-30 mb-6" />
+
+        {/* Details Section */}
+        <div className="w-full lg:w-10/12 space-y-6">
+          {/* Title, Rating, Price */}
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-blue-950">
+                {product.name}
+              </h1>
+              <div className="flex items-center mt-2">
+                {Array.from({ length: Math.floor(product.rating) }).map((_, i) => (
+                  <BsStarFill key={i} color="#ffb500" />
+                ))}
+                <span className="ml-2 text-gray-600">({product.rating})</span>
+              </div>
+              <p className="mt-1 text-xl font-semibold">${product.price}</p>
             </div>
-            <div className='border border-gray-300 border-opacity-80 flex justify-evenly rounded-xl mt-4 items-center'>
-                <div
-                 onClick={addToCartHandler}
-                className='md:py-3 md:px-5 font-medium text-lg max-md:py-2 max-md:px-3'
-                >
-                +
-                </div>
-                <div className='md:py-3 md:px-5 text-base max-md:py-2 max-md:px-3'>
-                5
-                </div>
-                <div 
-                className='md:py-3 md:px-5 font-medium max-md:text-sm md:text-lg max-md:py-2 max-md:px-3'>
-                -
-                <span className='-ml-1'>-
-                </span>
-                </div>
-            </div>
-        </div>
-    </div>
-      <div className='py-4'>
-          <p className='pb-4 font-semibold text-gray-500'>Sizes</p>
-          <div className='flex gap-3 flex-wrap'>
-            {shoeSizes.map((shoe, index) => (
+            <div className="flex flex-col items-end space-y-4">
               <button
-              onClick={() => handleSizeChange(shoe.size, index)}
-              key={index} className={`sizes-btn ${sizeChoice === shoe.size ? 'bg-bluedark text-slate-200 shadow-sm' : ''}`}>{shoe.size}</button>
-            ))}
-          </div>
-      </div>
-      <div className='pt-4'>
-          <p className='pb-2 font-semibold text-gray-500'>Color</p>
-          <div className='flex gap-3 flex-wrap'>
-            {
-              shoeColors.map((shoe, index) => (
-                <button 
-                key={index}
-                onClick={() => handleShoeChoice(shoe.color)}
-                className={`${shoe.hex} rounded-full px-5 py-5 hover:ring-1 hover:ring-blue-400 hover:ring-offset-4 ${colorChoice === shoe.color ? 'ring-blue-400 ring-1 ring-offset-4' : ''} `}>
+                onClick={handleLoveChange}
+                className="p-2 rounded-full border border-gray-300"
+              >
+                <FaHeart color={loveColor ? '#FF0000' : '#cecece'} />
+              </button>
+              <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden">
+                <button
+                  onClick={addToCartHandler}
+                  className="px-4 py-2"
+                >
+                  +
                 </button>
-              ))
-            }
+                <span className="px-4 py-2">{currentQty}</span>
+                <button
+                  onClick={removeFromCartHandler}
+                  className="px-4 py-2"
+                >
+                  –
+                </button>
+                <button
+                  onClick={handleClear}
+                  className="px-3 py-2 text-red-500"
+                >
+                  <CiCircleRemove size={18} />
+                </button>
+              </div>
+            </div>
           </div>
-      </div>
 
-      <div>
-        <p className='font-semibold text-lg pt-3 text-gray-500 '>Description</p>
-        <p className='text-sm pt-2 max-md:text-justify md:text-pretty'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore etpt dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat</p>
+          {/* Sizes */}
+          <div>
+            <p className="font-semibold text-gray-600 mb-2">Sizes</p>
+            <div className="flex flex-wrap gap-3">
+              {shoeSizes.map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleSizeChange(s.size)}
+                  className={`px-4 py-2 border rounded ${
+                    sizeChoice === s.size
+                      ? 'bg-blue-800 text-white'
+                      : 'bg-white text-gray-700 hover:ring-2 hover:ring-blue-600'
+                  }`}
+                >
+                  {s.size}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Colors */}
+          <div>
+            <p className="font-semibold text-gray-600 mb-2">Color</p>
+            <div className="flex flex-wrap gap-3">
+              {shoeColors.map((c, i) => (
+                <button
+                  key={i}
+                  onClick={() => handleColorChange(c.color)}
+                  className={`w-8 h-8 rounded-full border-2 ${
+                    colorChoice === c.color
+                      ? 'ring-2 ring-blue-600 hover:animate-pulse'
+                      : 'ring-0'
+                  }`}
+                  style={{ backgroundColor: c.color }}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div>
+            <p className="font-semibold text-gray-600 mb-2">Description</p>
+            <p className="text-gray-700 text-sm">
+              {product.description}
+            </p>
+          </div>
+
+          {/* Proceed to Cart */}
+          <Link
+            href="/cart"
+            className="block text-center bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition"
+          >
+            Proceed to Cart
+          </Link>
+        </div>
       </div>
-      <a
-      href='/cart' 
-      className='bg-primary py-3 rounded-xl mt-8 w-full text-slate-100 font-medium text-lg inline-block text-center hover:bg-blue-700'>
-      Proceed to Cart
-      </a>
-      <br/><br/>
     </section>
-    </section>
-    
-  )
+  );
 }
 
-export default ProductPage;
+export default dynamic(() => Promise.resolve(ProductPage), {
+  ssr: false,
+});

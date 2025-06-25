@@ -3,6 +3,10 @@ import "./globals.css";
 import ClientWrapper from "./ClientWrapper";
 import { UserProvider } from "@/components/contexts/UserContext";
 import { CartProvider } from "../components/contexts/AddToCart";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "@/components/contexts/AuthContext";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +33,23 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden min-h-screen flex flex-col w-full relative`}
       >
-        {/* Use ClientWrapper to handle Navbar and Footer rendering */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          style={{
+            width: "100%",
+            maxWidth: "400px",
+            margin: "0 auto",
+          }} />
+      <AuthProvider>
         <UserProvider>
           <CartProvider>
             <ClientWrapper>
@@ -37,6 +57,7 @@ export default function RootLayout({ children }) {
             </ClientWrapper>
           </CartProvider>
         </UserProvider>
+      </AuthProvider>
       </body>
     </html>
   );

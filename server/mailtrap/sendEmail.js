@@ -1,8 +1,8 @@
 const { client, sender } = require("./config");
-const { VERIFICATION_EMAIL_TEMPLATE, WELCOME_ONBOARDING, PASSWORD_RESET_EMAIL_TEMPLATE } = require("./emailTemplate");
+const { VERIFICATION_EMAIL_TEMPLATE, WELCOME_ONBOARDING, PASSWORD_RESET_EMAIL_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE } = require("./emailTemplate");
 
 module.exports = {
-    sendVerificationEmail: async (email, verificationToken) => {
+    sendVerificationEmail: async (email, verificationToken, username) => {
         const recipients = [
             {
               email,
@@ -14,7 +14,7 @@ module.exports = {
                 from: sender,
                 to: recipients,
                 subject: "Verify your email address",
-                html: VERIFICATION_EMAIL_TEMPLATE.replace(`{verificationCode}`, verificationToken),
+                html: VERIFICATION_EMAIL_TEMPLATE.replace(`{verificationCode}`, verificationToken).replace(`{username}`, username),
                 category: "Email Verification",
               })
 
@@ -57,6 +57,22 @@ module.exports = {
         })
       } catch (error) {
         console.log(error.message)
+      }
+    },
+    sendResetEmailSuccess: async (email) => {
+      const recipient = [{email}]
+
+      try {
+        const response = await client.send({
+        from: sender,
+        to: recipient,
+        subject: 'Password Reset Successful',
+        html: PASSWORD_RESET_SUCCESS_TEMPLATE.replace(`{email}`, email),
+        category: 'Password Reset Successful'
+        })
+      } catch (error) {
+        console.log(error.message)
+        return res.status(400).json({message: 'Error sending reset email'})
       }
     }
 }

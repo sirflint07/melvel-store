@@ -3,8 +3,14 @@ import React, { useState, useContext } from 'react';
 import { FaUserPlus } from 'react-icons/fa';
 import { IoWarning } from "react-icons/io5";
 import {motion} from 'framer-motion'
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
+import PasswordMeter from '@/components/PasswordMeter';
+import { AuthContext } from '@/components/contexts/AuthContext';
 
 const SignUpForm = () => {
+  const { signup, error, isAuthenticated } = useContext(AuthContext);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -29,64 +35,67 @@ const SignUpForm = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setTimeout(() => {setFormError({})}, 5000);
+
   
-    // Basic client-side validation
-    if (!formData.name || !formData.email || !formData.password || Object.values(formData).includes('')) {
-      console.log('Form Data:', formData);
-      console.log('Form Error', formError); // Debugging log
-      setIsLoading(false);
+  const newErrors = {};
+  Object.entries(formData).forEach(([key, value]) => {
+    if (!value.trim()) {
+      newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required`;
     }
-  
-    try {
-      console.log('Form Data:', formData); // Debugging log
-      const response = await fetch('http://localhost:4000/api/signup', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        setFormData({
-          name: '',
-          username: '',
-          state: '',
-          address: '',
-          email: '',
-          password: '',
-        });
-        setFormError({});
-        console.log('User signed up successfully:', data);
-      } else {
-        console.log('Server Error:', data); // Log server error details
-        setFormError((prevErrors) => ({
-          ...prevErrors,
-          ...data,
-        }));
+  });
 
-        setTimeout(() => {setFormError({})}, 6000)
-        console.log('Form Errors:', formError); // Log form errors
-      }
-    } catch (error) {
-      console.error('Error during signup:', error);
-      setFormError((prevErrors) => ({
-        ...prevErrors,
-        general: 'Something went wrong. Please try again later.',
-      }));
-    } finally {
-      setIsLoading(false);
-    }
-  };
   
+  if (formData.password.length < 6) {
+    newErrors.password = 'Password must be at least 6 characters';
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setFormError(newErrors);
+    setIsLoading(false);
+    return;
+  }
+
+  // Add to validation checks
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(formData.email)) {
+  newErrors.email = 'Invalid email format';
+}
+
+  try {
+    const result = await signup(formData);
+    
+    if (result?.error) {
+      
+      toast.error(result.error);
+    } else if (result?.fieldErrors) {
+      
+      setFormError(result.fieldErrors);
+    } else {
+  setFormData({
+    name: '',
+    username: '',
+    state: '',
+    address: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+      toast.success('Verification email sent! Check your inbox');
+      router.push('/verify-email');
+    }
+  } catch (error) {
+    console.error('Signup error:', error);
+    toast.error(error.message || 'An unexpected error occurred');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 to-slate-100 flex items-center justify-center px-4">
@@ -128,7 +137,8 @@ const SignUpForm = () => {
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm  focus:outline focus:outline-primary sm:text-sm"
                 placeholder={`Enter your ${field.label.toLowerCase()}`}
               />
-              {/* Display validation error */}
+             
+             
               { 
                 formError[field.name] && (
                 <motion.p
@@ -148,6 +158,7 @@ const SignUpForm = () => {
               }
             </div>
           ))}
+          <PasswordMeter password={formData.password} />
 
           <button
             type="submit"
@@ -179,6 +190,8 @@ const SignUpForm = () => {
               'Sign Up'
             )}
           </button>
+
+          {error && (<div className='text-red-500'>{error.message}</div>)}
         </form>
 
         <div className="mt-6 text-center">
