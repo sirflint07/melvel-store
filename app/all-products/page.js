@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FiSearch, FiShoppingBag, FiMenu, FiUser, FiHeart } from 'react-icons/fi'
 import Image from 'next/image'
-import { homehomeProducts } from '@/constants'
+import { homeProducts } from '@/constants' 
 
 
 // Color mapping for display
