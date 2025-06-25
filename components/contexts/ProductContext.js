@@ -1,16 +1,16 @@
-"use client"
+// "use client"
 
-import { createContext, useReducer } from "react";
+// import { createContext, useReducer } from "react";
 
-export const sneakerContext =  createContext()
+// export const sneakerContext =  createContext()
 
-export const sneakerContextProvider = () => {
+// export const sneakerContextProvider = () => {
 
-    return (
-        <sneakerContext.Provider>
+//     return (
+//         <sneakerContext.Provider>
 
-        </sneakerContext.Provider>
-    )
-}
+//         </sneakerContext.Provider>
+//     )
+// }
 
-const [state, action] = useReducer(changeSneakerAction, {})
+// const [state, action] = useReducer(changeSneakerAction, {})
