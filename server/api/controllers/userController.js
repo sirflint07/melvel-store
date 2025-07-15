@@ -69,6 +69,8 @@ createUser: async (req, res) => {
     try {
     const user = await User.create(body);
     const jwtToken = createToken(user._id);
+    console.log(`New user created at: ${user.formattedCreatedAt}`)
+    
 
     res.cookie('token', jwtToken, {
       httpOnly: true,
@@ -92,7 +94,8 @@ createUser: async (req, res) => {
     return res.status(201).json({
       success: true,
       message: 'User created successfully',
-      userId: user._id
+      userId: user._id,
+      createdAt: user.formattedCreatedAt
     });
 
   } catch (err) {

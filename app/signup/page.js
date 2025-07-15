@@ -123,7 +123,7 @@ if (!emailRegex.test(formData.email)) {
           ].map((field) => (
             <div key={field.name}>
               <label
-                htmlFor={field.name}
+                html4For={field.name}
                 className="block text-sm font-medium text-gray-700"
               >
                 {field.label}
